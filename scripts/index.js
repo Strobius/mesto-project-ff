@@ -42,3 +42,5 @@ function showCards() {
 }
 
 showCards();
+
+console.log('hello world!')
