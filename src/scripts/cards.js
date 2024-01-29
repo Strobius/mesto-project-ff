@@ -1,3 +1,5 @@
+import { cardTemplate, placesList, } from './index.js';
+
 export const initialCards = [
     {
       name: "Архыз",
@@ -41,14 +43,6 @@ export function createCard(card, deleteCard, openImagePopup, likeCard) {
     deleteCard(cardElement);
   });
 
-  cardImage.addEventListener('click', () => {
-    openImagePopup(card.link, card.name, card.name);
-  });
-
-  likeButton.addEventListener('click', () => {
-    likeCard(likeButton);
-  });
-
   return cardElement;
 }
 
@@ -56,9 +50,10 @@ export function deleteCard(cardElement) {
   cardElement.remove();
 }
 
-export function showCards(initialCards, deleteCard, openImagePopup, likeCard) {
-  initialCards.forEach((card) => {
-    const cardElement = createCard(card, deleteCard, openImagePopup, likeCard);
+export function showCards() {
+  
+  initialCards.forEach( initialCards => {
+    const cardElement = createCard(initialCards, deleteCard);
     placesList.append(cardElement);
   });
 }
