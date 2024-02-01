@@ -1,10 +1,9 @@
 export function openPopup(popup) {
   popup.classList.add("popup_is-opened");
-  
+
   document.addEventListener("keydown", handleEscapePress);
 
   popup.addEventListener("click", handleOverlayClick);
-
 }
 
 export function handleEscapePress(evt) {
@@ -25,5 +24,4 @@ export function closePopup(popup) {
   document.removeEventListener("keydown", handleEscapePress);
 
   popup.removeEventListener("click", handleOverlayClick);
-
 }
