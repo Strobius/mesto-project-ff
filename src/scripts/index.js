@@ -34,17 +34,10 @@ showInitialCards();
 
 function getCurrentProfileData() {
   return {
-    currentName: document.querySelector(".profile__title").textContent,
-    currentJob: document.querySelector(".profile__description").textContent,
+    currentName: name.textContent,
+    currentJob: description.textContent,
   };
 }
-
-popups.forEach((popup) => {
-  const popupCloseButton = popup.querySelector(".popup__close");
-  popupCloseButton.addEventListener("click", () => {
-    closePopup(popup);
-  });
-});
 
 function editFormSubmit(evt) {
   evt.preventDefault();
@@ -79,6 +72,13 @@ editButton.addEventListener("click", () => {
   openPopup(popupEdit);
   nameInput.value = currentName;
   jobInput.value = currentJob;
+});
+
+popups.forEach((popup) => {
+  const popupCloseButton = popup.querySelector(".popup__close");
+  popupCloseButton.addEventListener("click", () => {
+    closePopup(popup);
+  });
 });
 
 addButton.addEventListener("click", () => {
