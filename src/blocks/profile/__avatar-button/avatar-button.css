@@ -1,0 +1,13 @@
+.avatar_button {
+    background-color: transparent;
+    border: none;
+    width: 120px; 
+    height: 120px;
+    border-radius: 50%;
+    z-index: 2;
+    position: relative;
+}
+
+.avatar_button:hover {
+    cursor: pointer;
+}

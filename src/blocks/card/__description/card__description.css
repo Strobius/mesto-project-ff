@@ -5,3 +5,10 @@
   background: #fff;
   padding: 25px 20px;
 }
+
+.card__like-container {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  gap: 4px;
+}
