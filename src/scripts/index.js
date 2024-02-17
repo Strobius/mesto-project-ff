@@ -150,7 +150,10 @@ editButton.addEventListener("click", () => {
   editSaveButton.textContent = "Сохранить";
   nameInput.value = currentName;
   jobInput.value = currentJob;
-  clearValidation(formEditProfile, validationConfig)
+  clearValidation(formEditProfile, {
+    inputSelector: ".popup__input",
+    submitButtonSelector: ".popup__button",
+  });
 });
 
 popups.forEach((popup) => {
@@ -180,5 +183,5 @@ enableValidation({
   inputSelector: ".popup__input",
   inputErrorSelector: ".input_error",
   submitButtonSelector: ".popup__button",
-  inputErrorClass: ".input_error",
+  inputErrorClass: ".input_error"
 });
