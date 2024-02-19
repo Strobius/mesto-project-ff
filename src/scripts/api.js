@@ -1,119 +1,77 @@
+import { request } from "./utils.js"
+
+export const config = {
+  baseUrl: "https://mesto.nomoreparties.co/v1/wff-cohort-6",
+  headers: {
+    authorization: 'c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347',
+    'Content-Type': 'application/json',
+  },
+};
+
 export const fetchUserData = () => {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-6/users/me", {
-    headers: {
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка при загрузке данных пользователя");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  return request(`${config.baseUrl}/users/me`, {
+    headers: config.headers,
+  });
 };
 
 export const fetchInitialCards = () => {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-6/cards", {
-    headers: {
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка при загрузке карточек");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  return request(`${config.baseUrl}/cards`, {
+    headers: config.headers,
+  });
 };
 
 export const updateProfileOnServer = (name, about) => {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-6/users/me", {
+  return request(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: {
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
-      "Content-Type": "application/json",
+      ...config.headers,
     },
     body: JSON.stringify({
       name: name,
       about: about,
     }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка при обновлении данных пользователя");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  });
 };
 
 export const newCardOnServer = (name, link) => {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-6/cards", {
+  return request(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: {
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
-      "Content-Type": "application/json",
+      ...config.headers,
     },
     body: JSON.stringify({
       name: name,
       link: link,
     }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка при добавлении новой карточки");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  });
 };
 
 export const deleteCardFromServer = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-6/cards/${cardId}`, {
+  return request(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: {
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
+      ...config.headers,
     },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Ошибка при удалении карточки");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  });
 };
 
 export const updateAvatarS = (AvatarLink) => {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-6/users/me/avatar", {
+  return request(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      authorization: "c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347",
+      ...config.headers,
     },
     body: JSON.stringify({ avatar: AvatarLink }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`Ошибка: ${res.status}`);
-      }
-    })
-    .catch((error) => {
-      console.error("Ошибка при обновлении аватара:", error);
-    });
+  });
 };
+
+export const toggleLikeCard = (cardId, isLiked) => {
+  return request(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: isLiked ? "DELETE" : "PUT",
+    headers: {
+      ...config.headers,
+    },
+  });
+};
+

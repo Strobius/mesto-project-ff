@@ -1,7 +1,8 @@
-import { cardTemplate } from "./index.js";
-import { deleteCardFromServer } from "./api.js"
+import { deleteCardFromServer, toggleLikeCard } from "./api.js"
 
-export function createCard(card, deleteCard, openImagePopup, cardLike, currentUserID) {
+const cardTemplate = document.querySelector("#card-template");
+
+export function createCard(card, deleteCard, openImagePopup, likeCard, currentUserID) {
   const cardElement = cardTemplate.content.cloneNode(true).querySelector(".places__item");
   
   const cardImage = cardElement.querySelector(".card__image");
@@ -32,7 +33,7 @@ export function createCard(card, deleteCard, openImagePopup, cardLike, currentUs
   });
 
   likeButton.addEventListener("click", (evt) => {
-    cardLike(evt, card._id, likeButton, likeCountElement, currentUserID);
+    likeCard(evt, card._id, likeButton, likeCountElement, currentUserID);
   });
 
   deleteButton.addEventListener("click", () => {
@@ -43,34 +44,26 @@ export function createCard(card, deleteCard, openImagePopup, cardLike, currentUs
 }
 
 export function deleteCard(cardElement, cardId) {
-  cardElement.remove();
-  deleteCardFromServer(cardId);
+  deleteCardFromServer(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении карточки:", error);
+    });
 }
 
 
-export function cardLike(evt, cardId, likeButton, likesCounter) {
+export function likeCard(evt, cardId, likeButton, likesCounter) {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
 
-  fetch(`https://nomoreparties.co/v1/wff-cohort-6/cards/likes/${cardId}`, {
-    method: isLiked ? "DELETE" : "PUT",
-    headers: {
-      authorization: 'c1ae719a-bbf9-4c5e-bd23-4cebcf5fa347',
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
+  toggleLikeCard(cardId, isLiked)
     .then((updatedCardData) => {
       likesCounter.textContent = updatedCardData.likes.length;
       likeButton.classList.toggle("card__like-button_is-active");
     })
     .catch((error) => {
-      console.error("Ошибка при постановке лайка", error);
+      console.error("Ошибка при постановке/снятии лайка", error);
     });
 }
-
 

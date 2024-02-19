@@ -1,4 +1,4 @@
-import { createCard, cardLike, deleteCard } from "./card.js";
+import { createCard, likeCard, deleteCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
 import { enableValidation, clearValidation } from "./validation.js";
 import {
@@ -13,7 +13,6 @@ import "../pages/index.css";
 
 // Карточки 
 export const cardsContainer = document.querySelector(".places__list");
-export const cardTemplate = document.querySelector("#card-template");
 
 // Попапы 
 const popups = document.querySelectorAll(".popup");
@@ -66,7 +65,7 @@ Promise.all([fetchUserData(), fetchInitialCards()])
             card,
             deleteCard,
             openImagePopup,
-            cardLike,
+            likeCard,
             currentUserID 
           );
           cardsContainer.append(cardElement);
@@ -89,21 +88,38 @@ function updateAvatar(event) {
   event.preventDefault();
   const avatarLink = avatarUrlInput.value;
   avatarSaveButton.textContent = "Сохранение...";
-  updateAvatarS(avatarLink);
-  profileImage.style.backgroundImage = `url(${avatarLink})`;
-  closePopup(popupAvatar);
-  formAvatar.reset();
+  updateAvatarS(avatarLink)
+    .then(() => {
+      profileImage.style.backgroundImage = `url(${avatarLink})`;
+      closePopup(popupAvatar);
+      formAvatar.reset();
+    })
+    .catch((error) => {
+      console.error("Ошибка при обновлении аватара:", error);
+    })
+    .finally(() => {
+      avatarSaveButton.textContent = "Сохранить";
+    });
 }
 
 function editFormSubmit(evt) {
   evt.preventDefault();
   const nameValue = nameInput.value;
   const jobValue = jobInput.value;
-  name.textContent = nameValue;
-  description.textContent = jobValue;
   editSaveButton.textContent = "Сохранение...";
-  updateProfileOnServer(nameValue, jobValue);
-  closePopup(popupEdit);
+  updateProfileOnServer(nameValue, jobValue)
+    .then(() => {
+      name.textContent = nameValue;
+      description.textContent = jobValue;
+      closePopup(popupEdit);
+      formEdit.reset();
+    })
+    .catch((error) => {
+      console.error("Ошибка при обновлении профиля:", error);
+    })
+    .finally(() => {
+      editSaveButton.textContent = "Сохранить";
+    });
 }
 
 function handleCardFormSubmit(evt) {
@@ -112,19 +128,26 @@ function handleCardFormSubmit(evt) {
   cardPlace.name = cardNameInput.value;
   cardPlace.link = cardUrlInput.value;
   addSaveButton.textContent = "Сохранение...";
-  newCardOnServer(cardPlace.name, cardPlace.link).then((data) => {
-    const card = {
-      _id: data._id,
-      name: data.name,
-      link: data.link,
-      likes: data.likes,
-      owner: data.owner,
-    };
-    const cardElement = createCard(card, deleteCard, openImagePopup, cardLike);
-    cardsContainer.prepend(cardElement);
-    closePopup(popupAdd);
-    formAddCard.reset();
-  });
+  newCardOnServer(cardPlace.name, cardPlace.link)
+    .then((data) => {
+      const card = {
+        _id: data._id,
+        name: data.name,
+        link: data.link,
+        likes: data.likes,
+        owner: data.owner,
+      };
+      const cardElement = createCard(card, deleteCard, openImagePopup, likeCard);
+      cardsContainer.prepend(cardElement);
+      closePopup(popupAdd);
+      formAddCard.reset();
+    })
+    .catch((error) => {
+      console.error("Ошибка при добавлении карточки:", error);
+    })
+    .finally(() => {
+      addSaveButton.textContent = "Сохранить";
+    });
 }
 
 function openImagePopup(src, caption) {
@@ -136,7 +159,6 @@ function openImagePopup(src, caption) {
 
 avatarButton.addEventListener("click", () => {
   openPopup(popupAvatar);
-  avatarSaveButton.textContent = "Сохранить";
   clearValidation(popupAvatar, {
     inputSelector: ".popup__input",
     submitButtonSelector: ".popup__button",
@@ -147,7 +169,6 @@ editButton.addEventListener("click", () => {
   const { currentName, currentJob } = getCurrentProfileData();
 
   openPopup(popupEdit);
-  editSaveButton.textContent = "Сохранить";
   nameInput.value = currentName;
   jobInput.value = currentJob;
   clearValidation(formEditProfile, {
@@ -165,7 +186,6 @@ popups.forEach((popup) => {
 
 addButton.addEventListener("click", () => {
   openPopup(popupAdd);
-  addSaveButton.textContent = "Сохранить";
   clearValidation(popupAdd, {
     inputSelector: ".popup__input",
     submitButtonSelector: ".popup__button",
